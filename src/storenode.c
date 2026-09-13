@@ -17,3 +17,8 @@ bool StoreNodeCreate(Type key, Type value, StoreNode **out)
     *out = node;
     return true;
 }
+
+void StoreNodeDestroy(StoreNode **ptr)
+{
+    Release(ptr);
+}

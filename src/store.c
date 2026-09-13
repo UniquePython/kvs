@@ -23,6 +23,17 @@ bool KvsCreate(Store **out)
 
 void KvsDestroy(Store **ptr)
 {
+    if (ptr == NULL || *ptr == NULL)
+        return;
+
+    StoreNode *current = (*ptr)->head;
+    while (current != NULL)
+    {
+        StoreNode *next = current->next;
+        StoreNodeDestroy(&current);
+        current = next;
+    }
+
     Release(ptr);
 }
 
