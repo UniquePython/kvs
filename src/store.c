@@ -29,3 +29,12 @@ void KvsDestroy(Store **ptr)
 
     Release(ptr);
 }
+
+bool KvsSize(const Store *store, size_t *size)
+{
+    if (store == NULL || size == NULL)
+        return false;
+
+    *size = store->size;
+    return true;
+}
