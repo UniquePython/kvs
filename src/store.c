@@ -1,5 +1,7 @@
 #include "kvs/store.h"
+#include "storenode.h"
 #include "store.h"
+#include "kvs/type.h"
 #include "memory.h"
 #include <stddef.h>
 
@@ -37,4 +39,21 @@ bool KvsSize(const Store *store, size_t *size)
 
     *size = store->size;
     return true;
+}
+
+bool KvsHas(const Store *store, Type key)
+{
+    if (store == NULL)
+        return false;
+
+    StoreNode *current = store->head;
+    while (current != NULL)
+    {
+        if (TypeEquals(current->entry.key, key))
+            return true;
+
+        current = current->next;
+    }
+
+    return false;
 }
