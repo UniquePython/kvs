@@ -23,12 +23,6 @@ bool KvsCreate(Store **out)
 
 void KvsDestroy(Store **ptr)
 {
-    if (ptr == NULL || *ptr == NULL)
-        return;
-
-    (*ptr)->head = NULL;
-    (*ptr)->size = 0;
-
     Release(ptr);
 }
 
