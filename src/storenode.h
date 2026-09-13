@@ -2,6 +2,7 @@
 #define STORENODE_H_
 
 #include "entry.h"
+#include "kvs/type.h"
 
 typedef struct StoreNode
 {
@@ -9,5 +10,7 @@ typedef struct StoreNode
     struct StoreNode *next;
 
 } StoreNode;
+
+bool StoreNodeCreate(Type key, Type value, StoreNode **out);
 
 #endif

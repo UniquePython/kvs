@@ -15,4 +15,7 @@ bool KvsSize(const Store *store, size_t *size);
 bool KvsHas(const Store *store, Type key);
 bool KvsGet(const Store *store, Type key, Type *value);
 
+bool KvsSet(Store *store, Type key, Type value);
+bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes);
+
 #endif
