@@ -57,3 +57,23 @@ bool KvsHas(const Store *store, Type key)
 
     return false;
 }
+
+bool KvsGet(const Store *store, Type key, Type *value)
+{
+    if (store == NULL || value == NULL)
+        return false;
+
+    StoreNode *current = store->head;
+    while (current != NULL)
+    {
+        if (TypeEquals(current->entry.key, key))
+        {
+            *value = current->entry.value;
+            return true;
+        }
+
+        current = current->next;
+    }
+
+    return false;
+}

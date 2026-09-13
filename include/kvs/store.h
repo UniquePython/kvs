@@ -13,5 +13,6 @@ void KvsDestroy(Store **ptr);
 bool KvsSize(const Store *store, size_t *size);
 
 bool KvsHas(const Store *store, Type key);
+bool KvsGet(const Store *store, Type key, Type *value);
 
 #endif
