@@ -4,7 +4,7 @@
 
 typedef struct StoreNode
 {
-    Entry entry;
+    Entry *entry;
     struct StoreNode *next;
 
 } StoreNode;
