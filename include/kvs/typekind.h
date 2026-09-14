@@ -12,4 +12,6 @@ typedef enum
 } TypeKind;
 // clang-format on
 
+const char *TypeKindName(TypeKind kind);
+
 #endif
