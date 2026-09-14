@@ -3,7 +3,7 @@
 
 typedef enum
 {
-    KGEC_NO_ERROR,
+    KVS_GEC_NO_ERROR,
 
 } KvsGlobalErrorCode;
 

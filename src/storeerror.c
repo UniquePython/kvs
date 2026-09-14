@@ -38,7 +38,7 @@ void SetStoreError(KvsStore *store, KvsSEC code, const char *fmt, ...)
         va_end(argsCopy);
         store->error.msg = NULL;
         store->error.code = code; // code is left as given; a NULL message next to a
-                                  // non-KSEC_NO_ERROR code just means the message
+                                  // non-KVS_SEC_NO_ERROR code just means the message
                                   // itself couldn't be allocated
         return;
     }
@@ -53,7 +53,7 @@ void SetStoreError(KvsStore *store, KvsSEC code, const char *fmt, ...)
 KvsSEC KvsGetStoreErrorCode(const KvsStore *store)
 {
     if (store == NULL)
-        return KSEC_NO_ERROR;
+        return KVS_SEC_NO_ERROR;
 
     return store->error.code;
 }

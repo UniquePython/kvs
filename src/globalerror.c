@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-KvsGEC gec = KGEC_NO_ERROR;
+KvsGEC gec = KVS_GEC_NO_ERROR;
 char *gem = NULL;
 
 void SetGlobalError(KvsGEC code, const char *fmt, ...)
@@ -39,7 +39,7 @@ void SetGlobalError(KvsGEC code, const char *fmt, ...)
         va_end(argsCopy);
         gem = NULL;
         gec = code; // code is left as given; a NULL message next to a
-                    // non-KGEC_NO_ERROR code just means the message
+                    // non-KVS_GEC_NO_ERROR code just means the message
                     // itself couldn't be allocated
         return;
     }

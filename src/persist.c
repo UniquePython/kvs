@@ -45,24 +45,24 @@ static bool WriteKvsType(FILE *stream, KvsType type)
 
     switch (type.kind)
     {
-    case TK_U8:
+    case KVS_TK_U8:
         return fwrite(&type.as.u8.data, sizeof(type.as.u8.data), 1, stream) == 1;
 
-    case TK_U16:
+    case KVS_TK_U16:
     {
         uint8_t buf[2];
         WriteBE16(buf, type.as.u16.data);
         return fwrite(buf, sizeof(buf), 1, stream) == 1;
     }
 
-    case TK_U32:
+    case KVS_TK_U32:
     {
         uint8_t buf[4];
         WriteBE32(buf, type.as.u32.data);
         return fwrite(buf, sizeof(buf), 1, stream) == 1;
     }
 
-    case TK_U64:
+    case KVS_TK_U64:
     {
         uint8_t buf[8];
         WriteBE64(buf, type.as.u64.data);
@@ -104,7 +104,7 @@ static bool ReadKvsType(FILE *stream, KvsType *out, bool *corrupted)
 
     switch ((KvsTypeKind)kindByte)
     {
-    case TK_U8:
+    case KVS_TK_U8:
     {
         uint8_t value;
         if (fread(&value, sizeof(value), 1, stream) != 1)
@@ -116,7 +116,7 @@ static bool ReadKvsType(FILE *stream, KvsType *out, bool *corrupted)
         *out = KvsTypeU8(value);
         return true;
     }
-    case TK_U16:
+    case KVS_TK_U16:
     {
         uint8_t buf[2];
         if (fread(buf, sizeof(buf), 1, stream) != 1)
@@ -128,7 +128,7 @@ static bool ReadKvsType(FILE *stream, KvsType *out, bool *corrupted)
         *out = KvsTypeU16(ReadBE16(buf));
         return true;
     }
-    case TK_U32:
+    case KVS_TK_U32:
     {
         uint8_t buf[4];
         if (fread(buf, sizeof(buf), 1, stream) != 1)
@@ -140,7 +140,7 @@ static bool ReadKvsType(FILE *stream, KvsType *out, bool *corrupted)
         *out = KvsTypeU32(ReadBE32(buf));
         return true;
     }
-    case TK_U64:
+    case KVS_TK_U64:
     {
         uint8_t buf[8];
         if (fread(buf, sizeof(buf), 1, stream) != 1)

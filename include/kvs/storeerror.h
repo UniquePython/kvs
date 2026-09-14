@@ -5,7 +5,7 @@
 
 typedef enum
 {
-    KSEC_NO_ERROR,
+    KVS_SEC_NO_ERROR,
 
 } KvsStoreErrorCode;
 
