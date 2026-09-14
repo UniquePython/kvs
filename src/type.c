@@ -1,6 +1,38 @@
 #include "kvs/type.h"
 #include <inttypes.h>
 
+Type TypeU8(uint8_t value)
+{
+    return (Type){
+        .kind = TK_U8,
+        .as.u8.data = value,
+    };
+}
+
+Type TypeU16(uint16_t value)
+{
+    return (Type){
+        .kind = TK_U16,
+        .as.u16.data = value,
+    };
+}
+
+Type TypeU32(uint32_t value)
+{
+    return (Type){
+        .kind = TK_U32,
+        .as.u32.data = value,
+    };
+}
+
+Type TypeU64(uint64_t value)
+{
+    return (Type){
+        .kind = TK_U64,
+        .as.u64.data = value,
+    };
+}
+
 bool TypeEquals(Type a, Type b)
 {
     if (a.kind != b.kind)
