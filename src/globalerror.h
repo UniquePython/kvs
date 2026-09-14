@@ -6,4 +6,6 @@
 extern KvsGEC gec;
 extern char *gem;
 
+void SetGlobalError(KvsGEC code, const char *fmt, ...);
+
 #endif

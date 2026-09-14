@@ -10,6 +10,6 @@ typedef enum
 typedef KvsGlobalErrorCode KvsGEC;
 
 KvsGEC KvsGetGlobalErrorCode(void);
-char *KvsGetGlobalErrorMsg(void);
+const char *KvsGetGlobalErrorMsg(void);
 
 #endif
