@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/KVS-README.png" alt="kvs logo" width="400">
+</p>
+
 # kvs
 
 **kvs** stands for **Key-Value Store**, which is a simple *database* that can be used for storing *values* associated
