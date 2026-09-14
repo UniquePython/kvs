@@ -1,5 +1,6 @@
 #include "kvs/iterator.h"
 #include "iterator.h"
+#include "store.h"
 #include "memory.h"
 
 bool KvsIterCreate(const Store *store, KvsIterator **out)
@@ -12,7 +13,7 @@ bool KvsIterCreate(const Store *store, KvsIterator **out)
     if (!Allocate(sizeof(KvsIterator), &it))
         return false;
 
-    it->current = store;
+    it->current = store->head;
 
     *out = it;
     return true;
