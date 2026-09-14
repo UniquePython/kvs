@@ -37,3 +37,20 @@ void KvsIterDestroy(KvsIterator **ptr)
 {
     Release(ptr);
 }
+
+bool KvsForEach(const Store *store, KvsForEachFn fn, void *ctx)
+{
+    if (store == NULL || fn == NULL)
+        return false;
+
+    KvsIterator *it;
+    if (!KvsIterCreate(store, &it))
+        return false;
+
+    Type key, value;
+    while (KvsIterNext(it, &key, &value))
+        fn(key, value, ctx);
+
+    KvsIterDestroy(&it);
+    return true;
+}
