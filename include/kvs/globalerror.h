@@ -5,6 +5,7 @@ typedef enum
 {
     KVS_GEC_NO_ERROR,
     KVS_GEC_WRITE_FAILED,
+    KVS_GEC_STORE_ALLOC_FAILED,
 
 } KvsGlobalErrorCode;
 

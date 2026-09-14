@@ -1,6 +1,10 @@
 #include "kvs/store.h"
 #include "storenode.h"
 #include "store.h"
+#include "kvs/globalerror.h"
+#include "globalerror.h"
+#include "kvs/storeerror.h"
+#include "storeerror.h"
 #include "kvs/type.h"
 #include "memory.h"
 #include <stddef.h>
@@ -12,7 +16,10 @@ bool KvsCreate(KvsStore **out)
 
     KvsStore *store;
     if (!Allocate(sizeof(KvsStore), &store))
+    {
+        SetGlobalError(KVS_GEC_STORE_ALLOC_FAILED, "Ran out of memory while allocating KvsStore");
         return false;
+    }
 
     store->head = NULL;
     store->size = 0;
@@ -114,7 +121,10 @@ bool KvsSetOverwrote(KvsStore *store, KvsType key, KvsType value, bool *yes)
 
     StoreNode *node;
     if (!StoreNodeCreate(key, value, &node))
+    {
+        SetStoreError(store, KVS_SEC_NODE_ALLOC_FAILED, "Ran out of memory while allocating Node to append new entry");
         return false;
+    }
 
     if (previous == NULL)
         store->head = node;
