@@ -121,5 +121,35 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
     else
         previous->next = node;
 
+    store->size++;
+
     return true;
+}
+
+bool KvsDelete(Store *store, Type key)
+{
+    if (store == NULL)
+        return false;
+
+    StoreNode *previous = NULL;
+    StoreNode *current = store->head;
+
+    while (current != NULL)
+    {
+        if (TypeEquals(current->entry.key, key))
+        {
+            if (previous == NULL)
+                store->head = current->next;
+            else
+                previous->next = current->next;
+
+            StoreNodeDestroy(&current);
+            store->size--;
+            return true;
+        }
+        previous = current;
+        current = current->next;
+    }
+
+    return false;
 }

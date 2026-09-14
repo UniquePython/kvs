@@ -18,4 +18,6 @@ bool KvsGet(const Store *store, Type key, Type *value);
 bool KvsSet(Store *store, Type key, Type value);
 bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes);
 
+bool KvsDelete(Store *store, Type key);
+
 #endif
