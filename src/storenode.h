@@ -11,7 +11,7 @@ typedef struct StoreNode
 
 } StoreNode;
 
-bool StoreNodeCreate(Type key, Type value, StoreNode **out);
+bool StoreNodeCreate(KvsType key, KvsType value, StoreNode **out);
 void StoreNodeDestroy(StoreNode **ptr);
 
 #endif

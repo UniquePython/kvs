@@ -4,7 +4,7 @@
 #include "kvs/store.h"
 #include <stdbool.h>
 
-bool KvsSave(const Store *store, const char *path);
-bool KvsLoad(const char *path, Store **out);
+bool KvsSave(const KvsStore *store, const char *path);
+bool KvsLoad(const char *path, KvsStore **out);
 
 #endif

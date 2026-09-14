@@ -1,7 +1,7 @@
 #include "storenode.h"
 #include "memory.h"
 
-bool StoreNodeCreate(Type key, Type value, StoreNode **out)
+bool StoreNodeCreate(KvsType key, KvsType value, StoreNode **out)
 {
     if (out == NULL)
         return false;

@@ -4,14 +4,14 @@
 // clang-format off
 typedef enum
 {
-    TK_U8  = 1,
-    TK_U16 = 2,
-    TK_U32 = 3,
-    TK_U64 = 4,
+    KVS_TK_U8  = 1,
+    KVS_TK_U16 = 2,
+    KVS_TK_U32 = 3,
+    KVS_TK_U64 = 4,
 
-} TypeKind;
+} KvsTypeKind;
 // clang-format on
 
-const char *TypeKindName(TypeKind kind);
+const char *KvsTypeKindName(KvsTypeKind kind);
 
 #endif

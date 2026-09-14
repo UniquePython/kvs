@@ -1,16 +1,16 @@
 #include "kvs/typekind.h"
 
-const char *TypeKindName(TypeKind kind)
+const char *KvsTypeKindName(KvsTypeKind kind)
 {
     switch (kind)
     {
-    case TK_U8:
+    case KVS_TK_U8:
         return "u8";
-    case TK_U16:
+    case KVS_TK_U16:
         return "u16";
-    case TK_U32:
+    case KVS_TK_U32:
         return "u32";
-    case TK_U64:
+    case KVS_TK_U64:
         return "u64";
     default:
         return "unknown";

@@ -1,27 +1,37 @@
 #include "kvs/store.h"
 #include "storenode.h"
 #include "store.h"
+#include "kvs/globalerror.h"
+#include "globalerror.h"
+#include "kvs/storeerror.h"
+#include "storeerror.h"
 #include "kvs/type.h"
 #include "memory.h"
 #include <stddef.h>
 
-bool KvsCreate(Store **out)
+bool KvsCreate(KvsStore **out)
 {
     if (out == NULL)
         return false;
 
-    Store *store;
-    if (!Allocate(sizeof(Store), &store))
+    KvsStore *store;
+    if (!Allocate(sizeof(KvsStore), &store))
+    {
+        SetGlobalError(KVS_GEC_STORE_ALLOC_FAILED, "Ran out of memory while allocating KvsStore");
         return false;
+    }
 
     store->head = NULL;
     store->size = 0;
+
+    store->error.code = KVS_SEC_NO_ERROR;
+    store->error.msg = NULL;
 
     *out = store;
     return true;
 }
 
-void KvsDestroy(Store **ptr)
+void KvsDestroy(KvsStore **ptr)
 {
     if (ptr == NULL || *ptr == NULL)
         return;
@@ -37,7 +47,7 @@ void KvsDestroy(Store **ptr)
     Release(ptr);
 }
 
-bool KvsSize(const Store *store, size_t *size)
+bool KvsSize(const KvsStore *store, size_t *size)
 {
     if (store == NULL || size == NULL)
         return false;
@@ -46,7 +56,7 @@ bool KvsSize(const Store *store, size_t *size)
     return true;
 }
 
-bool KvsHas(const Store *store, Type key)
+bool KvsHas(const KvsStore *store, KvsType key)
 {
     if (store == NULL)
         return false;
@@ -54,7 +64,7 @@ bool KvsHas(const Store *store, Type key)
     StoreNode *current = store->head;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
             return true;
 
         current = current->next;
@@ -63,7 +73,7 @@ bool KvsHas(const Store *store, Type key)
     return false;
 }
 
-bool KvsGet(const Store *store, Type key, Type *value)
+bool KvsGet(const KvsStore *store, KvsType key, KvsType *value)
 {
     if (store == NULL || value == NULL)
         return false;
@@ -71,7 +81,7 @@ bool KvsGet(const Store *store, Type key, Type *value)
     StoreNode *current = store->head;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             *value = current->entry.value;
             return true;
@@ -83,12 +93,12 @@ bool KvsGet(const Store *store, Type key, Type *value)
     return false;
 }
 
-bool KvsSet(Store *store, Type key, Type value)
+bool KvsSet(KvsStore *store, KvsType key, KvsType value)
 {
     return KvsSetOverwrote(store, key, value, NULL);
 }
 
-bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
+bool KvsSetOverwrote(KvsStore *store, KvsType key, KvsType value, bool *yes)
 {
     if (store == NULL)
         return false;
@@ -100,7 +110,7 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
     StoreNode *previous = NULL;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             current->entry.value = value;
             if (yes != NULL)
@@ -114,7 +124,10 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
 
     StoreNode *node;
     if (!StoreNodeCreate(key, value, &node))
+    {
+        SetStoreError(store, KVS_SEC_NODE_ALLOC_FAILED, "Ran out of memory while allocating Node to append new entry");
         return false;
+    }
 
     if (previous == NULL)
         store->head = node;
@@ -126,7 +139,7 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
     return true;
 }
 
-bool KvsDelete(Store *store, Type key)
+bool KvsDelete(KvsStore *store, KvsType key)
 {
     if (store == NULL)
         return false;
@@ -136,7 +149,7 @@ bool KvsDelete(Store *store, Type key)
 
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             if (previous == NULL)
                 store->head = current->next;

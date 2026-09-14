@@ -8,7 +8,7 @@
 
 typedef struct
 {
-    TypeKind kind;
+    KvsTypeKind kind;
 
     union
     {
@@ -34,14 +34,14 @@ typedef struct
 
     } as;
 
-} Type;
+} KvsType;
 
-Type TypeU8(uint8_t value);
-Type TypeU16(uint16_t value);
-Type TypeU32(uint32_t value);
-Type TypeU64(uint64_t value);
+KvsType KvsTypeU8(uint8_t value);
+KvsType KvsTypeU16(uint16_t value);
+KvsType KvsTypeU32(uint32_t value);
+KvsType KvsTypeU64(uint64_t value);
 
-bool TypeEquals(Type a, Type b);
-bool TypePrint(Type type, FILE *stream);
+bool KvsTypeEquals(KvsType a, KvsType b);
+bool KvsTypePrint(KvsType type, FILE *stream);
 
 #endif
