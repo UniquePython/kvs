@@ -9,6 +9,7 @@ typedef enum
     KVS_GEC_FILE_OPEN_FAILED,
     KVS_GEC_BAD_MAGIC,
     KVS_GEC_UNSUPPORTED_VERSION,
+    KVS_GEC_CORRUPTED_DATA,
 
 } KvsGlobalErrorCode;
 

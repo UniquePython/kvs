@@ -13,7 +13,6 @@ typedef enum
     KVS_SEC_WRITE_FAILED,
     KVS_SEC_CLOSE_FAILED,
     KVS_SEC_RENAME_FAILED,
-    KVS_SEC_CORRUPTED_DATA,
 
 } KvsStoreErrorCode;
 

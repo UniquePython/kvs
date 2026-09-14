@@ -293,7 +293,7 @@ bool KvsLoad(const char *path, KvsStore **out)
         {
             if (corrupted)
             {
-                SetStoreError(store, KVS_SEC_CORRUPTED_DATA, "'%s' is corrupted: malformed entry", path);
+                SetGlobalError(KVS_GEC_CORRUPTED_DATA, "'%s' is corrupted: malformed entry", path);
                 ok = false;
             }
             break; // clean EOF: no more entries, stop normally
@@ -304,7 +304,7 @@ bool KvsLoad(const char *path, KvsStore **out)
         {
             // a key without a matching value is always corruption,
             // never a valid stopping point
-            SetStoreError(store, KVS_SEC_CORRUPTED_DATA, "'%s' is corrupted: key with no matching value", path);
+            SetGlobalError(KVS_GEC_CORRUPTED_DATA, "'%s' is corrupted: key with no matching value", path);
             ok = false;
             break;
         }
