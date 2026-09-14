@@ -2,6 +2,11 @@
 #include "kvs/iterator.h"
 #include "kvs/type.h"
 #include "kvs/store.h"
+#include "kvs/globalerror.h"
+#include "globalerror.h"
+#include "kvs/storeerror.h"
+#include "storeerror.h"
+#include "discardconst.h"
 #include "memory.h"
 #include <string.h>
 #include <stdio.h>
@@ -169,7 +174,10 @@ bool KvsSave(const KvsStore *store, const char *path)
 
     char *tmpPath;
     if (!Allocate(tmpLen, &tmpPath))
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_TMP_PATH_ALLOC_FAILED, "Ran out of memory while allocating temp path for save");
         return false;
+    }
 
     memcpy(tmpPath, path, pathLen);
     memcpy(tmpPath + pathLen, ".tmp", 5);
@@ -177,6 +185,7 @@ bool KvsSave(const KvsStore *store, const char *path)
     FILE *stream = fopen(tmpPath, "wb");
     if (stream == NULL)
     {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_TMP_FILE_OPEN_FAILED, "Failed to open temp file '%s' for writing", tmpPath);
         Release(&tmpPath);
         return false;
     }
@@ -184,16 +193,23 @@ bool KvsSave(const KvsStore *store, const char *path)
     bool ok = true;
 
     if (ok && fwrite(KVS_MAGIC, sizeof(KVS_MAGIC), 1, stream) != 1)
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_WRITE_FAILED, "Failed to write magic header to '%s'", tmpPath);
         ok = false;
+    }
 
     if (ok && fwrite(&KVS_FORMAT_VERSION, sizeof(KVS_FORMAT_VERSION), 1, stream) != 1)
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_WRITE_FAILED, "Failed to write format version to '%s'", tmpPath);
         ok = false;
+    }
 
     if (ok)
     {
         KvsIterator *it;
         if (!KvsIterCreate(store, &it))
         {
+            // KvsIterCreate already reports its own store error on failure
             ok = false;
         }
         else
@@ -202,17 +218,26 @@ bool KvsSave(const KvsStore *store, const char *path)
             while (ok && KvsIterNext(it, &key, &value))
             {
                 if (!WriteKvsType(stream, key) || !WriteKvsType(stream, value))
+                {
+                    SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_WRITE_FAILED, "Failed to write entry to '%s'", tmpPath);
                     ok = false;
+                }
             }
             KvsIterDestroy(&it);
         }
     }
 
     if (fclose(stream) != 0)
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_CLOSE_FAILED, "Failed to close temp file '%s'", tmpPath);
         ok = false;
+    }
 
     if (ok && rename(tmpPath, path) != 0)
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_RENAME_FAILED, "Failed to rename '%s' to '%s'", tmpPath, path);
         ok = false;
+    }
 
     if (!ok)
         remove(tmpPath); // best-effort cleanup; ignore failure here, we're already reporting failure
@@ -228,12 +253,16 @@ bool KvsLoad(const char *path, KvsStore **out)
 
     FILE *stream = fopen(path, "rb");
     if (stream == NULL)
+    {
+        SetGlobalError(KVS_GEC_FILE_OPEN_FAILED, "Failed to open '%s' for reading", path);
         return false;
+    }
 
     unsigned char magic[4];
     if (fread(magic, sizeof(magic), 1, stream) != 1 ||
         memcmp(magic, KVS_MAGIC, sizeof(magic)) != 0)
     {
+        SetGlobalError(KVS_GEC_BAD_MAGIC, "'%s' is not a valid kvs file", path);
         fclose(stream);
         return false;
     }
@@ -242,6 +271,7 @@ bool KvsLoad(const char *path, KvsStore **out)
     if (fread(&formatVersion, sizeof(formatVersion), 1, stream) != 1 ||
         formatVersion != KVS_FORMAT_VERSION)
     {
+        SetGlobalError(KVS_GEC_UNSUPPORTED_VERSION, "'%s' has unsupported format version", path);
         fclose(stream);
         return false;
     }
@@ -249,6 +279,7 @@ bool KvsLoad(const char *path, KvsStore **out)
     KvsStore *store;
     if (!KvsCreate(&store))
     {
+        // KvsCreate already reports its own global error on failure
         fclose(stream);
         return false;
     }
@@ -261,19 +292,26 @@ bool KvsLoad(const char *path, KvsStore **out)
         if (!ReadKvsType(stream, &key, &corrupted))
         {
             if (corrupted)
+            {
+                SetStoreError(store, KVS_SEC_CORRUPTED_DATA, "'%s' is corrupted: malformed entry", path);
                 ok = false;
+            }
             break; // clean EOF: no more entries, stop normally
         }
 
         KvsType value;
         if (!ReadKvsType(stream, &value, &corrupted))
         {
-            ok = false; // a key without a matching value is always corruption,
-            break;      // never a valid stopping point
+            // a key without a matching value is always corruption,
+            // never a valid stopping point
+            SetStoreError(store, KVS_SEC_CORRUPTED_DATA, "'%s' is corrupted: key with no matching value", path);
+            ok = false;
+            break;
         }
 
         if (!KvsSet(store, key, value))
         {
+            // KvsSet already reports its own store error on failure
             ok = false;
             break;
         }
