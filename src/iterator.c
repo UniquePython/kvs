@@ -3,7 +3,7 @@
 #include "store.h"
 #include "memory.h"
 
-bool KvsIterCreate(const Store *store, KvsIterator **out)
+bool KvsIterCreate(const KvsStore *store, KvsIterator **out)
 {
     if (store == NULL || out == NULL)
         return false;
@@ -19,7 +19,7 @@ bool KvsIterCreate(const Store *store, KvsIterator **out)
     return true;
 }
 
-bool KvsIterNext(KvsIterator *it, Type *key, Type *value)
+bool KvsIterNext(KvsIterator *it, KvsType *key, KvsType *value)
 {
     if (it == NULL || key == NULL || value == NULL)
         return false;
@@ -39,7 +39,7 @@ void KvsIterDestroy(KvsIterator **ptr)
     Release(ptr);
 }
 
-bool KvsForEach(const Store *store, KvsForEachFn fn, void *ctx)
+bool KvsForEach(const KvsStore *store, KvsForEachFn fn, void *ctx)
 {
     if (store == NULL || fn == NULL)
         return false;
@@ -48,7 +48,7 @@ bool KvsForEach(const Store *store, KvsForEachFn fn, void *ctx)
     if (!KvsIterCreate(store, &it))
         return false;
 
-    Type key, value;
+    KvsType key, value;
     while (KvsIterNext(it, &key, &value))
         fn(key, value, ctx);
 

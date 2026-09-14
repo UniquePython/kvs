@@ -1,39 +1,39 @@
 #include "kvs/type.h"
 #include <inttypes.h>
 
-Type TypeU8(uint8_t value)
+KvsType KvsTypeU8(uint8_t value)
 {
-    return (Type){
+    return (KvsType){
         .kind = TK_U8,
         .as.u8.data = value,
     };
 }
 
-Type TypeU16(uint16_t value)
+KvsType KvsTypeU16(uint16_t value)
 {
-    return (Type){
+    return (KvsType){
         .kind = TK_U16,
         .as.u16.data = value,
     };
 }
 
-Type TypeU32(uint32_t value)
+KvsType KvsTypeU32(uint32_t value)
 {
-    return (Type){
+    return (KvsType){
         .kind = TK_U32,
         .as.u32.data = value,
     };
 }
 
-Type TypeU64(uint64_t value)
+KvsType KvsTypeU64(uint64_t value)
 {
-    return (Type){
+    return (KvsType){
         .kind = TK_U64,
         .as.u64.data = value,
     };
 }
 
-bool TypeEquals(Type a, Type b)
+bool KvsTypeEquals(KvsType a, KvsType b)
 {
     if (a.kind != b.kind)
         return false;
@@ -62,12 +62,12 @@ bool TypeEquals(Type a, Type b)
 #define U32_FMT "%" PRIu32
 #define U64_FMT "%" PRIu64
 
-bool TypePrint(Type type, FILE *stream)
+bool KvsTypePrint(KvsType type, FILE *stream)
 {
     if (stream == NULL)
         return false;
 
-    if (fprintf(stream, "%s: ", TypeKindName(type.kind)) < 0)
+    if (fprintf(stream, "%s: ", KvsTypeKindName(type.kind)) < 0)
         return false;
 
     switch (type.kind)

@@ -37,7 +37,7 @@ static void WriteBE64(uint8_t out[8], uint64_t value)
     out[7] = (uint8_t)(value);
 }
 
-static bool WriteType(FILE *stream, Type type)
+static bool WriteKvsType(FILE *stream, KvsType type)
 {
     uint8_t kindByte = (uint8_t)type.kind;
     if (fwrite(&kindByte, sizeof(kindByte), 1, stream) != 1)
@@ -93,7 +93,7 @@ static uint64_t ReadBE64(const uint8_t in[8])
            ((uint64_t)in[6] << 8) | (uint64_t)in[7];
 }
 
-static bool ReadType(FILE *stream, Type *out, bool *corrupted)
+static bool ReadKvsType(FILE *stream, KvsType *out, bool *corrupted)
 {
     if (corrupted != NULL)
         *corrupted = false;
@@ -102,7 +102,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
     if (fread(&kindByte, sizeof(kindByte), 1, stream) != 1)
         return false; // clean EOF at entry boundary — corrupted stays false
 
-    switch ((TypeKind)kindByte)
+    switch ((KvsTypeKind)kindByte)
     {
     case TK_U8:
     {
@@ -113,7 +113,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
                 *corrupted = true;
             return false;
         }
-        *out = TypeU8(value);
+        *out = KvsTypeU8(value);
         return true;
     }
     case TK_U16:
@@ -125,7 +125,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
                 *corrupted = true;
             return false;
         }
-        *out = TypeU16(ReadBE16(buf));
+        *out = KvsTypeU16(ReadBE16(buf));
         return true;
     }
     case TK_U32:
@@ -137,7 +137,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
                 *corrupted = true;
             return false;
         }
-        *out = TypeU32(ReadBE32(buf));
+        *out = KvsTypeU32(ReadBE32(buf));
         return true;
     }
     case TK_U64:
@@ -149,7 +149,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
                 *corrupted = true;
             return false;
         }
-        *out = TypeU64(ReadBE64(buf));
+        *out = KvsTypeU64(ReadBE64(buf));
         return true;
     }
     default:
@@ -159,7 +159,7 @@ static bool ReadType(FILE *stream, Type *out, bool *corrupted)
     }
 }
 
-bool KvsSave(const Store *store, const char *path)
+bool KvsSave(const KvsStore *store, const char *path)
 {
     if (store == NULL || path == NULL)
         return false;
@@ -198,10 +198,10 @@ bool KvsSave(const Store *store, const char *path)
         }
         else
         {
-            Type key, value;
+            KvsType key, value;
             while (ok && KvsIterNext(it, &key, &value))
             {
-                if (!WriteType(stream, key) || !WriteType(stream, value))
+                if (!WriteKvsType(stream, key) || !WriteKvsType(stream, value))
                     ok = false;
             }
             KvsIterDestroy(&it);
@@ -221,7 +221,7 @@ bool KvsSave(const Store *store, const char *path)
     return ok;
 }
 
-bool KvsLoad(const char *path, Store **out)
+bool KvsLoad(const char *path, KvsStore **out)
 {
     if (path == NULL || out == NULL)
         return false;
@@ -246,7 +246,7 @@ bool KvsLoad(const char *path, Store **out)
         return false;
     }
 
-    Store *store;
+    KvsStore *store;
     if (!KvsCreate(&store))
     {
         fclose(stream);
@@ -256,17 +256,17 @@ bool KvsLoad(const char *path, Store **out)
     bool ok = true;
     while (ok)
     {
-        Type key;
+        KvsType key;
         bool corrupted;
-        if (!ReadType(stream, &key, &corrupted))
+        if (!ReadKvsType(stream, &key, &corrupted))
         {
             if (corrupted)
                 ok = false;
             break; // clean EOF: no more entries, stop normally
         }
 
-        Type value;
-        if (!ReadType(stream, &value, &corrupted))
+        KvsType value;
+        if (!ReadKvsType(stream, &value, &corrupted))
         {
             ok = false; // a key without a matching value is always corruption,
             break;      // never a valid stopping point

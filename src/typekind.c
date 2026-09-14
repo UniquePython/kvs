@@ -1,6 +1,6 @@
 #include "kvs/typekind.h"
 
-const char *TypeKindName(TypeKind kind)
+const char *KvsTypeKindName(KvsTypeKind kind)
 {
     switch (kind)
     {

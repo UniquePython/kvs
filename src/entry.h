@@ -5,8 +5,8 @@
 
 typedef struct
 {
-    Type key;
-    Type value;
+    KvsType key;
+    KvsType value;
 
 } Entry;
 

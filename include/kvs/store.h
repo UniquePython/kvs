@@ -5,19 +5,19 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct Store Store;
+typedef struct KvsStore KvsStore;
 
-bool KvsCreate(Store **out);
-void KvsDestroy(Store **ptr);
+bool KvsCreate(KvsStore **out);
+void KvsDestroy(KvsStore **ptr);
 
-bool KvsSize(const Store *store, size_t *size);
+bool KvsSize(const KvsStore *store, size_t *size);
 
-bool KvsHas(const Store *store, Type key);
-bool KvsGet(const Store *store, Type key, Type *value);
+bool KvsHas(const KvsStore *store, KvsType key);
+bool KvsGet(const KvsStore *store, KvsType key, KvsType *value);
 
-bool KvsSet(Store *store, Type key, Type value);
-bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes);
+bool KvsSet(KvsStore *store, KvsType key, KvsType value);
+bool KvsSetOverwrote(KvsStore *store, KvsType key, KvsType value, bool *yes);
 
-bool KvsDelete(Store *store, Type key);
+bool KvsDelete(KvsStore *store, KvsType key);
 
 #endif

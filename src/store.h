@@ -5,7 +5,7 @@
 #include "storenode.h"
 #include <stddef.h>
 
-struct Store
+struct KvsStore
 {
     StoreNode *head;
     size_t size;

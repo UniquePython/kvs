@@ -9,9 +9,9 @@ typedef enum
     TK_U32 = 3,
     TK_U64 = 4,
 
-} TypeKind;
+} KvsTypeKind;
 // clang-format on
 
-const char *TypeKindName(TypeKind kind);
+const char *KvsTypeKindName(KvsTypeKind kind);
 
 #endif

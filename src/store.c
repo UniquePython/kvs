@@ -5,13 +5,13 @@
 #include "memory.h"
 #include <stddef.h>
 
-bool KvsCreate(Store **out)
+bool KvsCreate(KvsStore **out)
 {
     if (out == NULL)
         return false;
 
-    Store *store;
-    if (!Allocate(sizeof(Store), &store))
+    KvsStore *store;
+    if (!Allocate(sizeof(KvsStore), &store))
         return false;
 
     store->head = NULL;
@@ -21,7 +21,7 @@ bool KvsCreate(Store **out)
     return true;
 }
 
-void KvsDestroy(Store **ptr)
+void KvsDestroy(KvsStore **ptr)
 {
     if (ptr == NULL || *ptr == NULL)
         return;
@@ -37,7 +37,7 @@ void KvsDestroy(Store **ptr)
     Release(ptr);
 }
 
-bool KvsSize(const Store *store, size_t *size)
+bool KvsSize(const KvsStore *store, size_t *size)
 {
     if (store == NULL || size == NULL)
         return false;
@@ -46,7 +46,7 @@ bool KvsSize(const Store *store, size_t *size)
     return true;
 }
 
-bool KvsHas(const Store *store, Type key)
+bool KvsHas(const KvsStore *store, KvsType key)
 {
     if (store == NULL)
         return false;
@@ -54,7 +54,7 @@ bool KvsHas(const Store *store, Type key)
     StoreNode *current = store->head;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
             return true;
 
         current = current->next;
@@ -63,7 +63,7 @@ bool KvsHas(const Store *store, Type key)
     return false;
 }
 
-bool KvsGet(const Store *store, Type key, Type *value)
+bool KvsGet(const KvsStore *store, KvsType key, KvsType *value)
 {
     if (store == NULL || value == NULL)
         return false;
@@ -71,7 +71,7 @@ bool KvsGet(const Store *store, Type key, Type *value)
     StoreNode *current = store->head;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             *value = current->entry.value;
             return true;
@@ -83,12 +83,12 @@ bool KvsGet(const Store *store, Type key, Type *value)
     return false;
 }
 
-bool KvsSet(Store *store, Type key, Type value)
+bool KvsSet(KvsStore *store, KvsType key, KvsType value)
 {
     return KvsSetOverwrote(store, key, value, NULL);
 }
 
-bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
+bool KvsSetOverwrote(KvsStore *store, KvsType key, KvsType value, bool *yes)
 {
     if (store == NULL)
         return false;
@@ -100,7 +100,7 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
     StoreNode *previous = NULL;
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             current->entry.value = value;
             if (yes != NULL)
@@ -126,7 +126,7 @@ bool KvsSetOverwrote(Store *store, Type key, Type value, bool *yes)
     return true;
 }
 
-bool KvsDelete(Store *store, Type key)
+bool KvsDelete(KvsStore *store, KvsType key)
 {
     if (store == NULL)
         return false;
@@ -136,7 +136,7 @@ bool KvsDelete(Store *store, Type key)
 
     while (current != NULL)
     {
-        if (TypeEquals(current->entry.key, key))
+        if (KvsTypeEquals(current->entry.key, key))
         {
             if (previous == NULL)
                 store->head = current->next;

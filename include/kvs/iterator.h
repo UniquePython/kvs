@@ -6,12 +6,12 @@
 
 typedef struct KvsIterator KvsIterator;
 
-bool KvsIterCreate(const Store *store, KvsIterator **out);
-bool KvsIterNext(KvsIterator *it, Type *key, Type *value);
+bool KvsIterCreate(const KvsStore *store, KvsIterator **out);
+bool KvsIterNext(KvsIterator *it, KvsType *key, KvsType *value);
 void KvsIterDestroy(KvsIterator **ptr);
 
-typedef void (*KvsForEachFn)(Type key, Type value, void *ctx);
-bool KvsForEach(const Store *store, KvsForEachFn fn, void *ctx);
+typedef void (*KvsForEachFn)(KvsType key, KvsType value, void *ctx);
+bool KvsForEach(const KvsStore *store, KvsForEachFn fn, void *ctx);
 
 // Note: mutating the store while an iterator over it is live is
 // undefined behavior. The caller is responsible for not doing that.
