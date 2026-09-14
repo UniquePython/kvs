@@ -1,6 +1,9 @@
 #include "kvs/iterator.h"
 #include "iterator.h"
 #include "store.h"
+#include "kvs/storeerror.h"
+#include "storeerror.h"
+#include "discardconst.h"
 #include "memory.h"
 
 bool KvsIterCreate(const KvsStore *store, KvsIterator **out)
@@ -11,7 +14,10 @@ bool KvsIterCreate(const KvsStore *store, KvsIterator **out)
     KvsIterator *it;
 
     if (!Allocate(sizeof(KvsIterator), &it))
+    {
+        SetStoreError((KvsStore *)DiscardConst(store), KVS_SEC_ITER_ALLOC_FAILED, "Ran out of memory while trying to allocate iterator");
         return false;
+    }
 
     it->current = store->head;
 
