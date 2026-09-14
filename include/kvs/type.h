@@ -4,6 +4,7 @@
 #include "kvs/typekind.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct
 {
@@ -36,5 +37,6 @@ typedef struct
 } Type;
 
 bool TypeEquals(Type a, Type b);
+bool TypePrint(Type type, FILE *stream);
 
 #endif
