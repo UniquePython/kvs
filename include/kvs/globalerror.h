@@ -4,6 +4,7 @@
 typedef enum
 {
     KVS_GEC_NO_ERROR,
+    KVS_GEC_WRITE_FAILED,
 
 } KvsGlobalErrorCode;
 

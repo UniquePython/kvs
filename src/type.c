@@ -1,4 +1,7 @@
 #include "kvs/type.h"
+#include "kvs/typekind.h"
+#include "kvs/globalerror.h"
+#include "globalerror.h"
 #include <inttypes.h>
 
 KvsType KvsTypeU8(uint8_t value)
@@ -68,19 +71,56 @@ bool KvsTypePrint(KvsType type, FILE *stream)
         return false;
 
     if (fprintf(stream, "%s: ", KvsTypeKindName(type.kind)) < 0)
+    {
+        SetGlobalError(KVS_GEC_WRITE_FAILED, "Failed to print type of kind %s", KvsTypeKindName(type.kind));
         return false;
+    }
 
     switch (type.kind)
     {
     case KVS_TK_U8:
-        return fprintf(stream, U8_FMT, type.as.u8.data) >= 0;
+    {
+        if (fprintf(stream, U8_FMT, type.as.u8.data) < 0)
+        {
+            SetGlobalError(KVS_GEC_WRITE_FAILED, "Failed to print type of kind %s", KvsTypeKindName(type.kind));
+            return false;
+        }
+        break;
+    }
+
     case KVS_TK_U16:
-        return fprintf(stream, U16_FMT, type.as.u16.data) >= 0;
+    {
+        if (fprintf(stream, U16_FMT, type.as.u16.data) < 0)
+        {
+            SetGlobalError(KVS_GEC_WRITE_FAILED, "Failed to print type of kind %s", KvsTypeKindName(type.kind));
+            return false;
+        }
+        break;
+    }
+
     case KVS_TK_U32:
-        return fprintf(stream, U32_FMT, type.as.u32.data) >= 0;
+    {
+        if (fprintf(stream, U32_FMT, type.as.u32.data) < 0)
+        {
+            SetGlobalError(KVS_GEC_WRITE_FAILED, "Failed to print type of kind %s", KvsTypeKindName(type.kind));
+            return false;
+        }
+        break;
+    }
+
     case KVS_TK_U64:
-        return fprintf(stream, U64_FMT, type.as.u64.data) >= 0;
+    {
+        if (fprintf(stream, U64_FMT, type.as.u64.data) < 0)
+        {
+            SetGlobalError(KVS_GEC_WRITE_FAILED, "Failed to print type of kind %s", KvsTypeKindName(type.kind));
+            return false;
+        }
+        break;
+    }
+
     default:
         return false;
     }
+
+    return true;
 }
