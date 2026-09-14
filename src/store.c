@@ -24,6 +24,9 @@ bool KvsCreate(KvsStore **out)
     store->head = NULL;
     store->size = 0;
 
+    store->error.code = KVS_SEC_NO_ERROR;
+    store->error.msg = NULL;
+
     *out = store;
     return true;
 }
